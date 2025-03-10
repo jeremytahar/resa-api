@@ -7,7 +7,10 @@ This is a basic PHP API for managing reservations. It includes authentification 
 To use our API in your projects:
 1. Clone the repository
 2. Install dependencies using `composer install`
-3. Configure db connection in model.php `$db = new PDO('mysql:host=[HOST:PORT];dbname=[DBNAME];charset=utf8', '[USERNAME]', '[PASSWORD]');`
+3. Configure db connection in model.php 
+```php 
+$db = new PDO('mysql:host=[HOST:PORT];dbname=[DBNAME];charset=utf8', '[USERNAME]', '[PASSWORD]');
+```
 
 ## How to use 
 
