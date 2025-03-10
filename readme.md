@@ -138,6 +138,7 @@ To delete an existing reservation, make a DELETE request to the `/index.php` end
 ## CORS 
 
 The API supports CORS with the following headers: 
+
 • `Access-Control-Allow-Origin: *`
 
 • `Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS`
