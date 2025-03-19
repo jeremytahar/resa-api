@@ -1,19 +1,20 @@
 <?php
-// POUR VERSION HÉBERGÉE
-// $allowedOrigin = 'https://aliceguy.eu';
-// $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowedOrigin = '*';
 
-// if ($origin !== $allowedOrigin) {
-//     http_response_code(403); // Accès interdit
-//     echo json_encode(["success" => false, "message" => "Accès non autorisé"]);
-//     exit;
-// }
+// Gérer la requête OPTIONS (pré-vérification CORS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: $allowedOrigin");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    http_response_code(200);
+    exit;
+}
 
 // Le reste du code (votre logique existante)
 require_once('jwt_utils.php');
 require_once('model.php');
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: $allowedOrigin");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -23,7 +24,7 @@ switch ($request_method) {
     case 'POST':
         $input = json_decode(file_get_contents("php://input"), true);
 
-        if (isset($input['last_name'], $input['first_name'], $input['phone_number'], $input['email'], $input['date_time'])) {
+        if (isset($input['last_name'], $input['first_name'], $input['phone_number'], $input['email'], $input['date_time'], $input['participants'], $input['promo_code'])) {
             $message = AddReservation($input);
             echo json_encode([
                 'success' => true,
@@ -38,11 +39,22 @@ switch ($request_method) {
         break;
 
     case 'GET':
-        error_log("Requête GET reçue");
+        // Vérification JWT
         $user = verifyJWT();
-        $reservations = getAllReservations();
-        error_log("Réservations récupérées : " . json_encode($reservations));
-        echo json_encode($reservations);
+        
+        // Si la requête est pour récupérer les 5 dernières réservations
+        if (isset($_GET['last5']) && $_GET['last5'] === 'true') {
+            error_log("Requête GET pour les 5 dernières réservations reçue");
+            $reservations = getLastReservations();
+            error_log("5 dernières réservations récupérées : " . json_encode($reservations));
+            echo json_encode($reservations);
+        } else {
+            // Sinon, récupérer toutes les réservations
+            error_log("Requête GET reçue pour toutes les réservations");
+            $reservations = getAllReservations();
+            error_log("Réservations récupérées : " . json_encode($reservations));
+            echo json_encode($reservations);
+        }
         break;
 
     case 'DELETE':
@@ -67,7 +79,7 @@ switch ($request_method) {
         $user = verifyJWT();
         $input = json_decode(file_get_contents("php://input"), true);
 
-        if (isset($input['id'], $input['last_name'], $input['first_name'], $input['phone_number'], $input['email'], $input['date_time'])) {
+        if (isset($input['id'], $input['last_name'], $input['first_name'], $input['phone_number'], $input['email'], $input['date_time'], $input['participants'], $input['promo_code'])) {
             $message = updateReservation($input['id'], $input);
             echo json_encode([
                 'success' => true,

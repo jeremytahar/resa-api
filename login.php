@@ -1,18 +1,24 @@
 <?php
-// POUR VERSION HÉBERGÉE
-// $allowedOrigin = 'https://aliceguy.eu';
-// $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+require_once 'vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-// if ($origin !== $allowedOrigin) {
-//     http_response_code(403); // Accès interdit
-//     echo json_encode(["success" => false, "message" => "Accès non autorisé"]);
-//     exit;
-// }
+$allowedOrigin = '*';
 
+// Gérer la requête OPTIONS (pré-vérification CORS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: $allowedOrigin");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    http_response_code(200);
+    exit;
+}
+
+// Le reste du code (votre logique existante)
 require_once('jwt_utils.php');
 
-header("Access-Control-Allow-Origin: *"); // Remplace * par un domaine spécifique si nécessaire
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Origin: $allowedOrigin");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
 
@@ -22,7 +28,8 @@ if (isset($input['username'], $input['password'])) {
     $username = $input['username'];
     $password = $input['password'];
 
-    if ($username === 'admin' && $password === 'password') {
+    // Comparaison avec les valeurs .env
+    if ($username === $_ENV['USERNAME'] && $password === $_ENV['PASSWORD']) {
         $token = generateToken($username);
         echo json_encode([
             'success' => true,

@@ -7,10 +7,7 @@ This is a basic PHP API for managing reservations. It includes authentification 
 To use our API in your projects:
 1. Clone the repository
 2. Install dependencies using `composer install`
-3. Configure db connection in model.php 
-```php 
-$db = new PDO('mysql:host=[HOST:PORT];dbname=[DBNAME];charset=utf8', '[USERNAME]', '[PASSWORD]');
-```
+3. Configure db connection in model.php `$db = new PDO('mysql:host=[HOST:PORT];dbname=[DBNAME];charset=utf8', '[USERNAME]', '[PASSWORD]');`
 
 ## How to use 
 
@@ -138,11 +135,8 @@ To delete an existing reservation, make a DELETE request to the `/index.php` end
 ## CORS 
 
 The API supports CORS with the following headers: 
-
 • `Access-Control-Allow-Origin: *`
-
 • `Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS`
-
 • `Access-Control-Allow-Headers: Content-Type, Authorization`
 
 You can replace `*` in `Access-Control-Allow-Origin: *` with your domain to limit API access. 
